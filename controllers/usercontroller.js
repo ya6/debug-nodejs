@@ -1,9 +1,10 @@
-var router = Router();
-var bcrypt = require('bcrypt');
-var jwt = require('jsonwebtoken');
+const router = require('express').Router();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-var User = require('../db').import('../models/user');
+const User = require('../models/user');
 
+console.log('usercontroller');
 router.post('/signup', (req, res) => {
     User.create({
         full_name: req.body.user.full_name,
@@ -26,23 +27,23 @@ router.post('/signup', (req, res) => {
         )
 })
 
-router.post('/signin', (req, res) => {
+router.route('/signin').post( (req, res) => { 
     User.findOne({ where: { username: req.body.user.username } }).then(user => {
         if (user) {
             bcrypt.compare(req.body.user.password, user.passwordHash, function (err, matches) {
                 if (matches) {
-                    var token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
+                    const token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
                     res.json({
                         user: user,
                         message: "Successfully authenticated.",
                         sessionToken: token
                     });
                 } else {
-                    res.status(502).send({ error: "Passwords do not match." })
+                    res.status(401).send({ error: "Passwords do not match." }) //502--401
                 }
             });
         } else {
-            res.status(403).send({ error: "User not found." })
+            res.status(404).send({ error: "User not found." }) //403 --> 404
         }
 
     })
