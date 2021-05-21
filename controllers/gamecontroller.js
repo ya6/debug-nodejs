@@ -12,7 +12,7 @@ router.get('/all', (req, res) => {
             },
 
             function findFail() {
-                res.status(500).json({
+                res.status(404).json({ // 500 --> 404
                     message: "Data not found"
                 })
             }
@@ -29,7 +29,7 @@ router.get('/:id', (req, res) => {
             },
 
             function findFail(err) {
-                res.status(500).json({
+                res.status(404).json({ // 500 --> 404
                     message: "Data not found."
                 })
             }
@@ -47,7 +47,7 @@ router.post('/create', (req, res) => {
     })
         .then(
             function createSuccess(game) {
-                res.status(200).json({
+                res.status(200).json({ //200 -->201
                     game: game,
                     message: "Game created."
                 })
